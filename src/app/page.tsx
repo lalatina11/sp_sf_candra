@@ -1,9 +1,12 @@
-import React from 'react'
+import { ModeToggle } from "@/components/ModeToggle";
 
 const Page = () => {
   return (
-    <div>Page</div>
-  )
-}
+    <div>
+      <h1>HomePage</h1>
+      <ModeToggle />
+    </div>
+  );
+};
 
-export default Page
+export default Page;
