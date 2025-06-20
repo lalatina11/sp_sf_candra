@@ -16,7 +16,7 @@ const Page = () => {
         <BackButton />
         <Card className="max-w-sm md:max-w-md w-full">
           <CardHeader className="flex justify-between items-center">
-            <CardTitle>Login Into Your Account</CardTitle>
+            <CardTitle>Register Your Account</CardTitle>
             <ModeToggle />
           </CardHeader>
           <CardContent>
