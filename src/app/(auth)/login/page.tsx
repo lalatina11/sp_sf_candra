@@ -1,4 +1,4 @@
-import LoginForm from "@/components/auth/LoginForm";
+import AuthForm from "@/components/AuthForm";
 import { ModeToggle } from "@/components/ModeToggle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Metadata } from "next";
@@ -17,7 +17,7 @@ const Page = () => {
           <ModeToggle />
         </CardHeader>
         <CardContent>
-          <LoginForm />
+          <AuthForm type="login" />
         </CardContent>
       </Card>
     </main>
