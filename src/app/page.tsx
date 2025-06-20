@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { ModeToggle } from "@/components/ModeToggle";
+import Link from "next/link";
 
-const Page = () => {
+const Page = async () => {
   return (
     <div suppressHydrationWarning>
       <header className="flex justify-between items-center w-full p-4 border-b border-zinc-500">
