@@ -1,4 +1,4 @@
-import DarkModeSwitcher from "@/components/DarkModeSwitcher";
+import { ModeToggle } from "@/components/ModeToggle";
 import RegisterForm from "@/components/auth/RegisterForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Metadata } from "next";
@@ -14,7 +14,7 @@ const Page = () => {
       <Card className="max-w-sm md:max-w-md m-auto w-full">
         <CardHeader className="flex justify-between items-center">
           <CardTitle>Login Into Your Account</CardTitle>
-          <DarkModeSwitcher />
+          <ModeToggle />
         </CardHeader>
         <CardContent>
           <RegisterForm />
