@@ -1,3 +1,5 @@
+import UserDropDownMenu from "@/components/AuthForm/UserDropDownMenu";
+import { ModeToggle } from "@/components/ModeToggle";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -12,18 +14,8 @@ const Page = () => {
       <header className="border-b border-zinc-400/50 px-4 py-2 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Project Management Dashboard</h1>
         <nav className="flex gap-4">
-          <Link
-            href="/dashboard/projects"
-            className="text-blue-700 dark:text-blue-400 hover:underline"
-          >
-            Projects
-          </Link>
-          <Link
-            href="/dashboard/users"
-            className="text-blue-700 dark:text-blue-400 hover:underline"
-          >
-            Users
-          </Link>
+          <ModeToggle />
+          <UserDropDownMenu />
         </nav>
       </header>
       <div className="flex-1 flex">
