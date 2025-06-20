@@ -11,13 +11,13 @@ const Page = async () => {
             href="/login"
             className="text-blue-700 dark:text-blue-400 hover:underline"
           >
-            Login
+            Masuk
           </Link>
           <Link
             href="/register"
             className="text-blue-700 dark:text-blue-400 hover:underline"
           >
-            Register
+            Daftar
           </Link>
           <Link
             href="/dashboard"
@@ -29,22 +29,22 @@ const Page = async () => {
         <ModeToggle />{" "}
       </header>
       <main className="flex flex-col items-center justify-center min-h-screen p-4 gap-6">
-        <h1 className="text-6xl font-bold">Project Management Web App</h1>
-        <p className="text-2xl">
-          A full-stack project management web app built with Next.js,
-          TypeScript, Tailwind CSS, and Prisma.
+        <h1 className="text-6xl font-bold">Aplikasi Web Manajemen Proyek</h1>
+        <p className="text-2xl p-4">
+          Aplikasi web manajemen proyek full-stack yang dibangun dengan Next.js,
+          TypeScript, Tailwind CSS, dan Prisma.
         </p>
         <p className="mt-4">
-          Features include user authentication, project creation and management,
-          task assignment, and real-time commenting.
+          Fitur termasuk autentikasi pengguna, pembuatan dan manajemen proyek,
+          penugasan tugas, dan komentar waktu nyata.
         </p>
         <p className="mt-4">
-          Try it out by{" "}
+          Cobalah dengan{" "}
           <Link
             href="/login"
             className="text-blue-700 dark:text-blue-400 hover:underline"
           >
-            logging in
+            masuk
           </Link>
           .
         </p>
