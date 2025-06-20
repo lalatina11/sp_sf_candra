@@ -1,14 +1,14 @@
 "use client";
+import { User } from "@/generated/prisma";
+import { apiRequest } from "@/lib/apiRequest";
+import { authSchema } from "@/lib/schema";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEventHandler, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Input } from "../ui/input";
-import { apiRequest } from "@/lib/apiRequest";
-import { toast } from "sonner";
-import { User } from "@/generated/prisma";
-import { useRouter } from "next/navigation";
-import emailValidator from "email-validator";
 interface Props {
   type: "login" | "register";
 }
@@ -20,22 +20,14 @@ const AuthForm = (props: Props) => {
   const handleForm: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
+    const { email, password } = Object.fromEntries(
+      new FormData(form).entries()
+    ) as User;
+
     if (props.type === "register") {
       try {
         setIsLoading(true);
-        const { email, password } = Object.fromEntries(
-          new FormData(form).entries()
-        ) as User;
-        const body = { email, password };
-        if (email.trim().length < 6) {
-          throw new Error("Email minimal 6 karakter!");
-        }
-        if (!emailValidator.validate(email)) {
-          throw new Error("Email tidak valid!");
-        }
-        if (password.trim().length < 6) {
-          throw new Error("Password minimal 6 karakter!");
-        }
+        const body = authSchema(email, password);
         const { res } = await apiRequest.post("/api/register", body);
         const result = await res.json();
         if (!res.ok || result.error) {
@@ -44,6 +36,23 @@ const AuthForm = (props: Props) => {
         toast("registrasi berhasil!");
         return setTimeout(() => {
           push("/login");
+        }, 300);
+      } catch (error) {
+        toast((error as Error).message);
+        setIsLoading(false);
+      }
+    } else {
+      try {
+        setIsLoading(true);
+        const body = authSchema(email, password);
+        const { res } = await apiRequest.post("/api/login", body);
+        const result = await res.json();
+        if (!res.ok || result.error) {
+          throw new Error(result.message);
+        }
+        toast("Login berhasil!");
+        return setTimeout(() => {
+          push("/dashboard");
         }, 300);
       } catch (error) {
         toast((error as Error).message);
