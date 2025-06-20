@@ -9,8 +9,7 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.json({ message: "Register Success!", error: false }, { status: 200 });
     } catch (error) {
         return NextResponse.json(
-            { message: "Register Failed!", error: (error as Error).message },
-            { status: 400 }
+            { message: (error as Error).message, error: true }, { status: 400 }
         );
     }
 }
