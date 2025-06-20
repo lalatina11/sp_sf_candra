@@ -1,17 +1,58 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { FormEventHandler, useState } from "react";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Input } from "../ui/input";
+import { apiRequest } from "@/lib/apiRequest";
+import { toast } from "sonner";
+import { User } from "@/generated/prisma";
+import { useRouter } from "next/navigation";
+import emailValidator from "email-validator";
 interface Props {
   type: "login" | "register";
 }
 
 const AuthForm = (props: Props) => {
+  const { push } = useRouter();
   const [isShowPassword, setIsShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const handleForm: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    if (props.type === "register") {
+      try {
+        setIsLoading(true);
+        const { email, password } = Object.fromEntries(
+          new FormData(form).entries()
+        ) as User;
+        const body = { email, password };
+        if (email.trim().length < 6) {
+          throw new Error("Email minimal 6 karakter!");
+        }
+        if (!emailValidator.validate(email)) {
+          throw new Error("Email tidak valid!");
+        }
+        if (password.trim().length < 6) {
+          throw new Error("Password minimal 6 karakter!");
+        }
+        const { res } = await apiRequest.post("/api/register", body);
+        const result = await res.json();
+        if (!res.ok || result.error) {
+          throw new Error(result.message);
+        }
+        toast("registrasi berhasil!");
+        return setTimeout(() => {
+          push("/login");
+        }, 300);
+      } catch (error) {
+        toast((error as Error).message);
+        setIsLoading(false);
+      }
+    }
+  };
   return (
-    <form className="space-y-4">
+    <form onSubmit={handleForm} className="space-y-4">
       <div className="flex flex-col gap-2">
         <label className="text-sm font-semibold" htmlFor="email">
           Email
@@ -41,7 +82,7 @@ const AuthForm = (props: Props) => {
           Show password
         </label>
       </div>
-      <Button type="submit" className="w-full text-center">
+      <Button disabled={isLoading} type="submit" className="w-full text-center">
         {props.type === "login" ? "Login" : "Register"}
       </Button>
       {props.type === "login" ? (
