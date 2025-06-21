@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dokumentasi
 
-## Getting Started
+## Project Fullstack Seller Pintar
 
-First, run the development server:
+Ujian kemampuan fullstack Seller Pintar
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Nama : Candra Rahmadan
+Email: rahmadancandra@gmail.com
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Next Js App Router**: Untuk routing sisi klien.
+2. **API Next Js Api Route**: Untuk API routes sisi server.
+3. **Database PostgreSQL**: Untuk menyimpan data.
+4. **Prisma ORM**: Untuk berinteraksi dengan database.
+5. **Authentifikasi : Custom Auth Menggunakan JWT**: Untuk autentikasi.
+6. **Zustand State Manager**: Untuk mengelola state.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Menjalankan Project
 
-## Learn More
+### Langkah 1: Klon Repository
 
-To learn more about Next.js, take a look at the following resources:
+Klon repository ini ke mesin lokal Anda.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Langkah 2: Salin .env.example ke .env
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Salin file `.env.example` ke `.env` dan isi nilai-nilai yang dibutuhkan.
 
-## Deploy on Vercel
+### Langkah 3: Install Dependencies
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Install dependensi menggunakan package manager pilihan Anda.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Langkah 4: Jalankan Project
+
+Jalankan project menggunakan metode pilihan Anda (misalnya `npm run dev`, `yarn dev`, dll.).
+
+### Langkah 5: Buka di Browser
+
+Buka `http://localhost:3000` di browser Anda untuk melihat project.
+
