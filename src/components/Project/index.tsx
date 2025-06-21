@@ -9,14 +9,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { apiRequest } from "@/lib/apiRequest";
-import { ProjectWithUser } from "@/types";
+import { ProjectWithUserAndMemberships } from "@/types";
 import { FormEventHandler, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 interface Props {
-  projects: ProjectWithUser[];
+  projects: ProjectWithUserAndMemberships[];
 }
 
 const Project = (props: Props) => {
