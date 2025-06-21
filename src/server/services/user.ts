@@ -1,7 +1,7 @@
 import { User } from "@/generated/prisma";
-import { emailUserRepository, getUserByEmailRepository, registerUserRepository } from "../repository/user";
+import { emailUserRepository, getUserByEmailRepository, getUserByIdRepository, registerUserRepository } from "../repository/user";
 import { compareSync, hashSync } from 'bcrypt-ts'
-import jwt from "jsonwebtoken"
+import jwt, { JwtPayload } from "jsonwebtoken"
 
 export const checkUserService = async (
   email: string,
@@ -48,3 +48,17 @@ export const registerUserService = async (data: User) => {
   const user = await registerUserRepository(data);
   return user;
 };
+
+export const getUserByToken = async (token?: string) => {
+  if (!token) {
+    throw new Error("You are not authorized!");
+  }
+
+  const decodeToken = jwt.verify(
+    token,
+    process.env.SECRET_KEY || "".toString()
+  ) as JwtPayload;
+
+  const user = await getUserByIdRepository(decodeToken?.id);
+  return user;
+}
