@@ -49,7 +49,7 @@ export const registerUserService = async (data: User) => {
   return user;
 };
 
-export const getUserByToken = async (token?: string) => {
+export const getUserByToken = async (token: string|null) => {
   if (!token) {
     throw new Error("You are not authorized!");
   }
