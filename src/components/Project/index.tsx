@@ -8,15 +8,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Project as ProjectType } from "@/generated/prisma";
+import { apiRequest } from "@/lib/apiRequest";
+import { ProjectWithUser } from "@/types";
 import { FormEventHandler, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { apiRequest } from "@/lib/apiRequest";
-import { toast } from "sonner";
 
 interface Props {
-  projects: ProjectType[];
+  projects: ProjectWithUser[];
 }
 
 const Project = (props: Props) => {
