@@ -1,8 +1,9 @@
 import { Project } from "@/generated/prisma"
+import { ProjectWithUser } from "@/types"
 import { create } from "zustand"
 
 type UseProjectStoreType = {
-    project: Project[]
+    project: ProjectWithUser[]
     addNewProject: (newProject: UseProjectStoreType['project']) => void
     selectedProjectId: Project['id'] | null
     setSelectedProjectId: (projectID: UseProjectStoreType['selectedProjectId']) => void
