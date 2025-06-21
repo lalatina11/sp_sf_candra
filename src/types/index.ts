@@ -1,3 +1,6 @@
-import { Project } from "@/generated/prisma";
+import { Membership, Project, } from "@/generated/prisma";
 
-export type ProjectWithUser = Project & { owner: { email: string } };
+export type ProjectWithUserAndMemberships = Project & {
+    owner: { email: string };
+    memberships: (Membership & { user: { email: string } })[];
+};
