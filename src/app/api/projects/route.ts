@@ -15,7 +15,7 @@ export const POST = async (req: NextRequest) => {
         if (!name.trim().length) {
             throw new Error("Mohon beri nama Project anda");
         }
-        const createProject = await prisma.project.create({ data: { ownerId: user?.id, name } })
+        const createProject = await prisma.project.create({ data: { ownerId: user?.id, name }, include: { owner: { select: { email: true } } } })
         return NextResponse.json({ message: "OK", data: createProject, error: false }, { status: 201 })
     } catch (error) {
         return NextResponse.json({ message: (error as Error).message, data: null, error: false }, { status: 400 })
