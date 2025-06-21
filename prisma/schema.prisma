@@ -27,6 +27,8 @@ model User {
   projects      Project[]    @relation("UserOwnedProjects")
   memberships   Membership[]
   assignedTasks Task[]       @relation("TaskAssignee")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @default(now())
 }
 
 model Project {
@@ -36,6 +38,8 @@ model Project {
   owner       User         @relation("UserOwnedProjects", fields: [ownerId], references: [id])
   tasks       Task[]
   memberships Membership[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @default(now())
 }
 
 model Task {
@@ -47,6 +51,8 @@ model Task {
   project     Project    @relation(fields: [projectId], references: [id])
   assigneeId  String?
   assignee    User?      @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @default(now())
 }
 
 model Membership {
@@ -55,6 +61,9 @@ model Membership {
   user      User    @relation(fields: [userId], references: [id])
   projectId String
   project   Project @relation(fields: [projectId], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @default(now())
 
   @@unique([userId, projectId])
 }
+
