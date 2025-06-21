@@ -1,4 +1,4 @@
-import { Membership, Project, Task, } from "@/generated/prisma";
+import { $Enums, Membership, Project, Task, } from "@/generated/prisma";
 
 export type ProjectWithUserAndMemberships = Project & {
   owner: { email: string };
@@ -40,3 +40,19 @@ export type TaskWithProjectInfo = Task & {
     })[];
   };
 };
+
+export type ProjectWithTask = {
+  tasks: {
+    id: string;
+    title: string;
+    description: string | null;
+    status: $Enums.TaskStatus;
+    assigneeId: string | null;
+  }[];
+} & {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  name: string;
+  ownerId: string;
+}
