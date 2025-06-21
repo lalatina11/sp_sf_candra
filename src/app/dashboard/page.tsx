@@ -1,16 +1,25 @@
 import UserDropDownMenu from "@/components/AuthForm/UserDropDownMenu";
 import { ModeToggle } from "@/components/ModeToggle";
+import Project from "@/components/Project";
+import SingleProject from "@/components/Project/SingleProject";
+import prisma from "@/lib/prisma";
 import { loggedInUser } from "@/server/actions";
 import { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Project Management | Login",
+  title: "Project Management | Dashboard",
   description: "Multi-User Project Management App",
 };
 
 const Page = async () => {
-  const { user } = await loggedInUser();
+  const { user, userId } = await loggedInUser();
+  const projects = await prisma.project.findMany({
+    where: {
+      OR: [{ ownerId: userId }, { memberships: { every: { userId } } }],
+    },
+    include: { owner: true, memberships: true },
+    orderBy: { createdAt: "desc" },
+  });
   return (
     <div className="h-screen flex flex-col">
       <header className="border-b border-zinc-400/50 px-4 py-2 flex items-center justify-between">
@@ -24,20 +33,8 @@ const Page = async () => {
         </nav>
       </header>
       <div className="flex-1 flex">
-        <aside className="w-64 border-r border-zinc-400/50 p-4">
-          <h2 className="text-lg font-semibold mb-2">Projects</h2>
-          <ul>
-            <li className="mb-1">
-              <Link
-                href="/dashboard/projects"
-                className="text-blue-700 dark:text-blue-400 hover:underline"
-              >
-                Projects 1
-              </Link>
-            </li>
-          </ul>
-        </aside>
-        <main className="flex-1 p-4"></main>
+        <Project projects={projects} />
+        <SingleProject />
       </div>
     </div>
   );
