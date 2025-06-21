@@ -17,3 +17,8 @@ export const getUserByEmailRepository = async (email: string) => {
     const user = await prisma.user.findFirst({ where: { email } });
     return user;
 };
+
+export const getUserByIdRepository = async (id: string) => {
+  const user = await prisma.user.findFirst({ where: { id } });
+  return user;
+};
