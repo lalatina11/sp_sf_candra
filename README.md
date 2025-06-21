@@ -38,3 +38,42 @@ Jalankan project menggunakan metode pilihan Anda (misalnya `npm run dev`, `yarn 
 
 Buka `http://localhost:3000` di browser Anda untuk melihat project.
 
+---
+
+# Seller Pintar Fullstack Project
+
+This is a fullstack project for Seller Pintar technical test.
+
+Name: Candra Rahmadan
+Email: rahmadancandra@gmail.com
+
+## Technology Stack
+
+1. **Next Js App Router**: For client-side routing.
+2. **API Next Js Api Route**: For server-side API routes.
+3. **PostgreSQL Database**: To store data.
+4. **Prisma ORM**: To interact with the database.
+5. **Custom Auth using JWT**: For authentication.
+6. **Zustand State Manager**: To manage state.
+
+## Running the Project
+
+### Step 1: Clone the Repository
+
+Clone this repository to your local machine.
+
+### Step 2: Copy .env.example to .env
+
+Copy the `.env.example` file to `.env` and fill in the necessary values.
+
+### Step 3: Install Dependencies
+
+Install dependencies using your preferred package manager.
+
+### Step 4: Run the Project
+
+Run the project using your preferred method (e.g. `npm run dev`, `yarn dev`, etc.).
+
+### Step 5: Open in Browser
+
+Open `http://localhost:3000` in your browser to view the project.
