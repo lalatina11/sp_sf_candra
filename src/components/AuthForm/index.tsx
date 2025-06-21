@@ -3,7 +3,6 @@ import { User } from "@/generated/prisma";
 import { apiRequest } from "@/lib/apiRequest";
 import { authSchema } from "@/lib/schema";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FormEventHandler, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
@@ -14,7 +13,6 @@ interface Props {
 }
 
 const AuthForm = (props: Props) => {
-  const { push } = useRouter();
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const handleForm: FormEventHandler<HTMLFormElement> = async (e) => {
@@ -22,7 +20,7 @@ const AuthForm = (props: Props) => {
     const form = e.currentTarget;
     const { email, password } = Object.fromEntries(
       new FormData(form).entries()
-    ) as User;
+    ) as unknown as User;
 
     if (props.type === "register") {
       try {
@@ -35,7 +33,7 @@ const AuthForm = (props: Props) => {
         }
         toast("registrasi berhasil!");
         return setTimeout(() => {
-          push("/login");
+          location.replace("/login");
         }, 300);
       } catch (error) {
         toast((error as Error).message);
@@ -52,7 +50,7 @@ const AuthForm = (props: Props) => {
         }
         toast("Login berhasil!");
         return setTimeout(() => {
-          push("/dashboard");
+          location.replace("/dashboard");
         }, 300);
       } catch (error) {
         toast((error as Error).message);
