@@ -48,6 +48,9 @@ export type ProjectWithTask = {
     description: string | null;
     status: $Enums.TaskStatus;
     assigneeId: string | null;
+    assignee: { email: string, id: string };
+    createdAt: Date;
+    updatedAt: Date;
   }[];
 } & {
   id: string;
