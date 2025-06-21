@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 
 const Page = () => {
   return (
-    <main className="flex flex-col gap-3 min-h-screen justify-center items-center">
-      <div className="w-max mx-auto flex flex-col gap-3">
+    <main className="flex flex-col gap-3 justify-center items-center">
+      <div className="w-max mx-auto flex flex-col gap-3 mt-12">
         <BackButton />
         <Card className="max-w-sm md:max-w-md w-full">
           <CardHeader className="flex justify-between items-center">
