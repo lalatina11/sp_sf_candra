@@ -1,13 +1,14 @@
 "use client";
 import { useProjectStore } from "@/app/utils/stores";
-import { User } from "@/generated/prisma";
-import { gettingMembershipUserData, gettingTaskData } from "@/lib";
+import { Task, User } from "@/generated/prisma";
+import { gettingMembershipUserData } from "@/lib";
 import { apiRequest } from "@/lib/apiRequest";
 import { ProjectWithUserAndMemberships } from "@/types";
-import { FormEventHandler, useEffect, useState } from "react";
+import Link from "next/link";
+import { FormEventHandler, useCallback, useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { toast } from "sonner";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,13 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Input } from "../ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 
 interface Props {
   currentUserID: string;
@@ -34,9 +42,7 @@ const SingleProject = (props: Props) => {
   const [updatedMemberships, setUpdatedMemberships] = useState<
     ProjectWithUserAndMemberships["memberships"]
   >([]);
-  const [updatedTaskData, setupdatedTaskData] = useState<
-    ProjectWithUserAndMemberships["tasks"]
-  >([]);
+  const [updatedTaskData, setupdatedTaskData] = useState<Task[]>([]);
 
   useEffect(() => {
     const memberships = gettingMembershipUserData(
@@ -45,12 +51,23 @@ const SingleProject = (props: Props) => {
     setUpdatedMemberships(memberships);
   }, [AllProjects, selectedProjectId]);
 
+  const gettingTaskData = useCallback(async () => {
+    try {
+      const { res } = await apiRequest.get(
+        "/api/tasks?projectId=" + selectedProjectId
+      );
+      const result = await res.json();
+      const allTasks = result.data as Task[];
+      setupdatedTaskData(allTasks);
+    } catch (error) {
+      console.error(error);
+      toast((error as Error).message);
+    }
+  }, [selectedProjectId]);
+
   useEffect(() => {
-    const tasks = gettingTaskData(
-      AllProjects.filter((proj) => proj.id === selectedProjectId)
-    );
-    setupdatedTaskData(tasks);
-  }, [AllProjects, selectedProjectId]);
+    gettingTaskData();
+  }, [AllProjects, gettingTaskData, selectedProjectId]);
 
   const [isDeleteDialogOpen, setisDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setisEditDialogOpen] = useState(false);
@@ -173,9 +190,20 @@ const SingleProject = (props: Props) => {
                     <span>Owner Project: {project.owner.email}</span>
                   </div>
                   {updatedTaskData.length ? (
-                    <div>
+                    <div className="grid grid-cols-2 gap-4 pr-4">
                       {updatedTaskData.map((task, idx) => (
-                        <div key={idx}>{task.project.name}</div>
+                        <Link href={"/project/" + selectedProjectId} key={idx}>
+                          <Card>
+                            <CardHeader>
+                              <CardTitle>{task.title}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <CardDescription>
+                                {task.description}
+                              </CardDescription>
+                            </CardContent>
+                          </Card>
+                        </Link>
                       ))}
                     </div>
                   ) : (
@@ -256,6 +284,12 @@ const SingleProject = (props: Props) => {
                         </DialogHeader>
                       </DialogContent>
                     </Dialog>
+                    <Link
+                      className={"" + buttonVariants({ variant: "default" })}
+                      href={"/projects/" + project.id}
+                    >
+                      Manage Task
+                    </Link>
                   </div>
                 </div>
                 <div className="w-72 border rounded-lg overflow-x-hidden border-zinc-500 p-4 h-screen overflow-y-scroll flex flex-col gap-3">
