@@ -87,11 +87,13 @@ const SingleProject = (props: Props) => {
     useState(false);
   const openDeleteMemberDialog = () => SetIsDeleteMemberDialogOpen(true);
 
-  const handleAddMemberShip = async () => {
+  const handleAddMemberShip: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
     try {
       setisAddingMemberLoading(true);
       const { res } = await apiRequest.post(
-        `/api/membership?projectId=${selectedProjectId}`,
+        `/api/memberships?projectId=${selectedProjectId}`,
         { userId: userIdForAddMembership }
       );
       const result = await res.json();
@@ -99,6 +101,7 @@ const SingleProject = (props: Props) => {
         throw new Error(result.message || "Failed to add membership");
       }
       const newMembership = result.data;
+      form.reset();
       setUpdatedMemberships([...updatedMemberships, newMembership]);
       toast("Membership ditambahkan");
       setisAddingMemberLoading(false);
