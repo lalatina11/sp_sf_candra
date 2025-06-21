@@ -30,9 +30,11 @@ const Project = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const open = () => setIsOpen(true);
   const close = () => setIsOpen(false);
+  const [isAddingProjectLoading, setIsAddingProjectLoading] = useState(false);
   const handleAddProject: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     try {
+      setIsAddingProjectLoading(true);
       const form = e.currentTarget;
       const formData = new FormData(form);
       const name = formData.get("name");
@@ -50,8 +52,10 @@ const Project = (props: Props) => {
       form.reset();
       close();
       toast("Berhasil Menambahkan Project");
+      setIsAddingProjectLoading(false);
     } catch (error) {
       toast((error as Error).message);
+      setIsAddingProjectLoading(false);
     }
   };
   useEffect(() => {
@@ -74,7 +78,7 @@ const Project = (props: Props) => {
                   <Input type="text" name="name" id="name" />
                 </div>
                 <div className="text-end">
-                  <Button>Submit</Button>
+                  <Button disabled={isAddingProjectLoading}>Submit</Button>
                 </div>
               </form>
             </DialogDescription>
