@@ -62,3 +62,16 @@ export const getUserByToken = async (token: string|null) => {
 
   return { user };
 }
+export const getUserByTokenClient = async (token: string|null) => {
+  if (!token) {
+    return {user:null}
+  }
+  const decodeToken = jwt.verify(
+    token,
+    process.env.SECRET_KEY || "".toString()
+  ) as JwtPayload;
+
+  const user = await getUserByIdRepository(decodeToken?.id);
+
+  return { user };
+}
