@@ -4,7 +4,7 @@ import Project from "@/components/Project";
 import SingleProject from "@/components/Project/SingleProject";
 import prisma from "@/lib/prisma";
 import { loggedInUser } from "@/server/actions";
-import { ProjectWithUser } from "@/types";
+import { ProjectWithUserAndMemberships } from "@/types";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,18 +14,18 @@ export const metadata: Metadata = {
 
 const Page = async () => {
   const { user, userId } = await loggedInUser();
-  const projects = await prisma.project.findMany({
+  const projects = (await prisma.project.findMany({
     where: {
-      OR: [{ ownerId: userId }, { memberships: { every: { userId } } }],
+      OR: [{ ownerId: userId }, { memberships: { some: { userId } } }],
     },
     include: {
       owner: { select: { email: true } },
       memberships: {
-        select: { user: { select: { email: true, _count: true } } },
+        include: { user: { select: { email: true } } },
       },
     },
     orderBy: { createdAt: "desc" },
-  }) as ProjectWithUser[];
+  })) as ProjectWithUserAndMemberships[];
 
   return (
     <div className="h-screen flex flex-col">
@@ -41,7 +41,7 @@ const Page = async () => {
       </header>
       <div className="flex-1 flex">
         <Project projects={projects} />
-        <SingleProject />
+        <SingleProject currentUserID={userId} user={user} />
       </div>
     </div>
   );
