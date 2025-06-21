@@ -92,8 +92,8 @@ const Project = (props: Props) => {
           </span>
         </li>
         {allProjects.length ? (
-          allProjects.map((project) => (
-            <li key={project.id} className="mb-1">
+          allProjects.map((project,idx) => (
+            <li key={idx} className="mb-1">
               <Button
                 onClick={() => setSelectedProjectId(project.id)}
                 variant={selectedProjectId === project.id ? "default" : "ghost"}
