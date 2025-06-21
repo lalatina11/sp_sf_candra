@@ -49,6 +49,7 @@ const SingleProject = (props: Props) => {
       AllProjects.filter((proj) => proj.id === selectedProjectId)
     );
     setUpdatedMemberships(memberships);
+    SetIsDeleteMemberDialogOpen(false);
   }, [AllProjects, selectedProjectId]);
 
   const gettingTaskData = useCallback(async () => {
@@ -75,12 +76,13 @@ const SingleProject = (props: Props) => {
   const closeDeleteDialog = () => setisDeleteDialogOpen(false);
   const openEditDialog = () => setisEditDialogOpen(true);
   const closeEditDialog = () => setisEditDialogOpen(false);
-  const [isDeletingProjectLoading, setisDeletingProjectLoading] =
+  const [isDeletingProjectLoading, setIsDeletingProjectLoading] =
+    useState(false);
+  const [isDeletingMembershipLoading, setIsDeletingMembershipLoading] =
     useState(false);
   const [isEditingProjectLoading, setisEditingProjectLoading] = useState(false);
   const [isAddMemberDialogOpen, setisAddMemberDialogOpen] = useState(false);
   const openAddMemberDialog = () => setisAddMemberDialogOpen(true);
-  // const closeAddMemberDialog = () => setisAddMemberDialogOpen(false)
   const [isAddingMemberLoading, setisAddingMemberLoading] = useState(false);
   const [userIdForAddMembership, setUserIdForAddMembership] = useState("");
   const [isDeleteMemberDialogOpen, SetIsDeleteMemberDialogOpen] =
@@ -105,7 +107,10 @@ const SingleProject = (props: Props) => {
       setUpdatedMemberships([...updatedMemberships, newMembership]);
       toast("Membership ditambahkan");
       setisAddingMemberLoading(false);
+      setisAddMemberDialogOpen(false);
+      SetIsDeleteMemberDialogOpen(false);
     } catch (error) {
+      SetIsDeleteMemberDialogOpen(false);
       setisAddingMemberLoading(false);
       toast((error as Error).message);
     }
@@ -113,7 +118,7 @@ const SingleProject = (props: Props) => {
 
   const handleDeleteProject = async (id: string) => {
     try {
-      setisDeletingProjectLoading(true);
+      setIsDeletingProjectLoading(true);
       const { res } = await apiRequest.delete(`/api/projects/${id}`);
       const result = await res.json();
       if (!res.ok || result.error) {
@@ -122,11 +127,10 @@ const SingleProject = (props: Props) => {
       addNewProject(AllProjects.filter((proj) => proj.id !== id));
       resetSelectedProjectId();
       toast("Project berhasil dihapus");
-      setisDeletingProjectLoading(false);
+      setIsDeletingProjectLoading(false);
     } catch (error) {
       console.log(error);
-
-      setisDeletingProjectLoading(false);
+      setIsDeletingProjectLoading(false);
       toast((error as Error).message);
     }
   };
@@ -163,7 +167,6 @@ const SingleProject = (props: Props) => {
       form.reset();
     } catch (error) {
       console.log(error);
-
       setisEditingProjectLoading(false);
       toast((error as Error).message);
     }
@@ -171,11 +174,15 @@ const SingleProject = (props: Props) => {
 
   const handleDeleteMembership = async (id: string) => {
     try {
-      await apiRequest.delete(`/api/membership/${id}`);
+      setIsDeletingMembershipLoading(true);
+      await apiRequest.delete(`/api/memberships/${id}`);
       setUpdatedMemberships(updatedMemberships.filter((m) => m.id !== id));
       toast("Membership berhasil dihapus");
+      setIsDeletingMembershipLoading(false);
+      SetIsDeleteMemberDialogOpen(false);
     } catch (error) {
-      console.error(error);
+      SetIsDeleteMemberDialogOpen(false);
+      setIsDeletingMembershipLoading(false);
       toast((error as Error).message);
     }
   };
@@ -195,7 +202,7 @@ const SingleProject = (props: Props) => {
                   {updatedTaskData.length ? (
                     <div className="grid grid-cols-2 gap-4 pr-4">
                       {updatedTaskData.map((task, idx) => (
-                        <Link href={"/project/" + selectedProjectId} key={idx}>
+                        <Link href={"/projects/" + selectedProjectId} key={idx}>
                           <Card>
                             <CardHeader>
                               <CardTitle>{task.title}</CardTitle>
@@ -314,6 +321,7 @@ const SingleProject = (props: Props) => {
                                 onClick={openDeleteMemberDialog}
                                 className="cursor-pointer"
                                 variant={"destructive"}
+                                disabled={isDeletingMembershipLoading}
                               >
                                 <MdDelete />
                               </Button>
@@ -389,7 +397,11 @@ const SingleProject = (props: Props) => {
                               <datalist id="userEmails">
                                 {props.allUsers
                                   .filter(
-                                    (usr) => usr.id !== props.currentUserID
+                                    (usr) =>
+                                      usr.id !== props.currentUserID &&
+                                      !updatedMemberships.some(
+                                        (m) => m.userId === usr.id
+                                      )
                                   )
                                   .map((user) => (
                                     <option key={user.id} value={user.email} />
