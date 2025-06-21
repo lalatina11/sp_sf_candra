@@ -1,16 +1,23 @@
 "use client";
 import { useProjectStore } from "@/app/utils/stores";
-import { gettingMembershipUserData } from "@/lib";
-import { Button } from "../ui/button";
 import { User } from "@/generated/prisma";
-import { useEffect, useState } from "react";
+import { gettingMembershipUserData } from "@/lib";
 import { ProjectWithUserAndMemberships } from "@/types";
+import { useEffect, useState } from "react";
+import { MdDelete } from "react-icons/md";
+import { Button } from "../ui/button";
+
 interface Props {
   currentUserID: string;
   user: User;
 }
 const SingleProject = (props: Props) => {
-  const { selectedProjectId, project: AllProjects } = useProjectStore();
+  const {
+    selectedProjectId,
+    project: AllProjects,
+    addNewProject,
+    resetSelectedProjectId,
+  } = useProjectStore();
   const [updatedMemberships, setUpdatedMemberships] = useState<
     ProjectWithUserAndMemberships["memberships"]
   >([]);
@@ -34,6 +41,11 @@ const SingleProject = (props: Props) => {
     setUpdatedMemberships([...updatedMemberships, newMembership]);
   };
 
+  const handleDeleteProject = async (id: string) => {
+    addNewProject(AllProjects.filter((proj) => proj.id !== id));
+    resetSelectedProjectId();
+  };
+
   return (
     <main className="flex-1 flex p-4">
       {AllProjects.length && selectedProjectId ? (
@@ -41,15 +53,42 @@ const SingleProject = (props: Props) => {
           (project) => {
             return (
               <div className="flex flex-1" key={project.id}>
-                <div className="flex flex-col flex-1 gap-3">
-                  <span>Nama Project: {project.name}</span>
-                  <span>Owner Project: {project.owner.email}</span>
+                <div className="flex flex-col justify-between min-h-screen flex-1 gap-3">
+                  <div className="flex flex-col gap-3 justify-between">
+                    <span>Nama Project: {project.name}</span>
+                    <span>Owner Project: {project.owner.email}</span>
+                  </div>
+                  <div className="flex justify-center gap-5 items-center p-4">
+                    <Button onClick={() => handleDeleteProject(project.id)}>
+                      Hapus Project ini
+                    </Button>
+                    <Button onClick={() => handleDeleteProject(project.id)}>
+                      Edit project ini
+                    </Button>
+                  </div>
                 </div>
                 <div className="w-72 border rounded-lg overflow-x-hidden border-zinc-500 p-4 h-screen overflow-y-scroll flex flex-col gap-3">
                   <span>Member list</span>
                   {updatedMemberships.length ? (
                     updatedMemberships.map((member) => {
-                      return <span key={member.id}>{member.user.email}</span>;
+                      return (
+                        <span className="flex gap-2 items-center justify-between" key={member.id}>
+                          <span>{member.user.email}</span>
+                          <Button
+                            className=""
+                            variant={"destructive"}
+                            onClick={() =>
+                              setUpdatedMemberships(
+                                updatedMemberships.filter(
+                                  (m) => m.id !== member.id
+                                )
+                              )
+                            }
+                          >
+                            <MdDelete />
+                          </Button>
+                        </span>
+                      );
                     })
                   ) : (
                     <span>Belum ada member</span>
