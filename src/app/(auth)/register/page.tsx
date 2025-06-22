@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Project Management | Login",
+  title: "Project Management | Register",
   description: "Multi-User Project Management App",
 };
 
