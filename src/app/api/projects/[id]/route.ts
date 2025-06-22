@@ -2,7 +2,7 @@ import { Project } from "@/generated/prisma";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const DELETE = async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
     try {
         const { id } = await params
         if (!id) {
@@ -15,7 +15,7 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: strin
     }
 }
 
-export const PATCH = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const PATCH = async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
     try {
         const { id } = await params
         if (!id) {
