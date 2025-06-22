@@ -2,7 +2,6 @@ import KanbanDND from "@/components/Project/KanbanDND";
 import prisma from "@/lib/prisma";
 import { TaskWithProjectInfo } from "@/types";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
 interface Props {
   params: Promise<{ id: string }>;
 }
@@ -17,9 +16,12 @@ const Page = async (props: Props) => {
   const tasks = (await prisma.task.findMany({
     where: { projectId: id },
   })) as TaskWithProjectInfo[];
+
+  console.log(tasks);
+
   return (
     <main className="flex flex-col gap-6">
-      {tasks.length ? <KanbanDND projectId={id} tasks={tasks} /> : notFound()}
+      <KanbanDND projectId={id} tasks={tasks} />
     </main>
   );
 };

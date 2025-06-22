@@ -155,33 +155,43 @@ const KanbanDND = (props: Props) => {
           </DialogDescription>
         </DialogContent>
       </Dialog>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="grid grid-cols-3 gap-4">
-          {statuses.map((status) => {
-            const columnTasks = tasks.filter((task) => task.status === status);
-            return (
-              <DroppableColumn key={status} id={status}>
-                <div className="flex-1 bg-zinc-100 dark:bg-zinc-900 p-4 rounded-md min-h-[200px]">
-                  <h2 className="text-xl font-semibold mb-4">{status}</h2>
 
-                  <SortableContext
-                    items={columnTasks.map((task) => task.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {columnTasks.map((task) => (
-                      <TaskCard key={task.id} task={task} status={status} />
-                    ))}
-                  </SortableContext>
-                </div>
-              </DroppableColumn>
-            );
-          })}
+      {tasks.length ? (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="grid grid-cols-3 gap-4">
+            {statuses.map((status) => {
+              const columnTasks = tasks.filter(
+                (task) => task.status === status
+              );
+              return (
+                <DroppableColumn key={status} id={status}>
+                  <div className="flex-1 bg-zinc-100 dark:bg-zinc-900 p-4 rounded-md min-h-[200px]">
+                    <h2 className="text-xl font-semibold mb-4">{status}</h2>
+
+                    <SortableContext
+                      items={columnTasks.map((task) => task.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {columnTasks.map((task) => (
+                        <TaskCard key={task.id} task={task} status={status} />
+                      ))}
+                    </SortableContext>
+                  </div>
+                </DroppableColumn>
+              );
+            })}
+          </div>
+        </DndContext>
+      ) : (
+        <div className="flex flex-col gap-2 justify-center items-center text-sm text-zinc-500">
+          <span>Project ini belum memiliki tugas</span>
+          <span>Silahkan Buat tugas terlebih dahulu</span>
         </div>
-      </DndContext>
+      )}
     </div>
   );
 };
