@@ -1,10 +1,16 @@
 import KanbanDND from "@/components/Project/KanbanDND";
 import prisma from "@/lib/prisma";
 import { TaskWithProjectInfo } from "@/types";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 interface Props {
   params: Promise<{ id: string }>;
 }
+
+export const metadata: Metadata = {
+  title: "Project Management | Project",
+  description: "Multi-User Project Management App",
+};
 
 const Page = async (props: Props) => {
   const { id } = await props.params;

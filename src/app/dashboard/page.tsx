@@ -2,7 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import prisma from "@/lib/prisma";
 import { loggedInUser } from "@/server/actions";
 import { ProjectWithUserAndMembershipsCount } from "@/types";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Project Management | Dashboard",
+  description: "Multi-User Project Management App",
+};
 
 const Page = async () => {
   const { userId } = await loggedInUser();

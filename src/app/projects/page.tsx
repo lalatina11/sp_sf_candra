@@ -6,7 +6,7 @@ import { ProjectWithUserAndMemberships } from "@/types";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Project Management | Dashboard",
+  title: "Project Management | Project",
   description: "Multi-User Project Management App",
 };
 

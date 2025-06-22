@@ -1,4 +1,10 @@
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Project Management | Home",
+  description: "Multi-User Project Management App",
+};
 
 const Page = async () => {
   return (
