@@ -1,5 +1,5 @@
 import Project from "@/components/Project";
-import SingleProject from "@/components/Project/SingleProject";
+import ProjectWorkspace from "@/components/Project/ProjectWorkspace";
 import prisma from "@/lib/prisma";
 import { loggedInUser } from "@/server/actions";
 import { ProjectWithUserAndMemberships } from "@/types";
@@ -43,7 +43,7 @@ const Page = async () => {
     <div className="h-screen flex flex-col">
       <div className="flex-1 flex">
         <Project projects={projects} />
-        <SingleProject currentUserID={userId} user={user} allUsers={allUsers} />
+        <ProjectWorkspace currentUserID={userId} user={user} allUsers={allUsers} />
       </div>
     </div>
   );

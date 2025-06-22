@@ -40,7 +40,7 @@ interface Props {
 
 const statuses = ["TODO", "IN_PROGRESS", "DONE"] as const;
 
-const ProjectDetails = (props: Props) => {
+const KanbanDND = (props: Props) => {
   const { tasks: initialTasks, projectId } = props;
   const [tasks, setTasks] = useState<TaskWithProjectInfo[]>([]);
   const [isFormDialogAddTaskOpen, setIsFormDialogAddTaskOpen] = useState(false);
@@ -186,4 +186,4 @@ const ProjectDetails = (props: Props) => {
   );
 };
 
-export default ProjectDetails;
+export default KanbanDND;

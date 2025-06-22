@@ -31,7 +31,7 @@ interface Props {
   user: User;
   allUsers: User[];
 }
-const SingleProject = (props: Props) => {
+const ProjectWorkspace = (props: Props) => {
   const {
     selectedProjectId,
     project: AllProjects,
@@ -442,4 +442,4 @@ const SingleProject = (props: Props) => {
   );
 };
 
-export default SingleProject;
+export default ProjectWorkspace;
