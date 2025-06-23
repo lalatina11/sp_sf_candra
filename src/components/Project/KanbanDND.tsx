@@ -71,6 +71,7 @@ const KanbanDND = (props: Props) => {
   const [isDeleteTaskDialogOpen, setIsDeleteTaskDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task>(initializeTask);
   const [editTaskStep, setEditTaskStep] = useState(1);
+  const [isUpating, setIsUpating] = useState({ delete: false, update: false });
 
   const openEditDialog = () => setIsEditTaskDialogOpen(true);
   const openDeleteDialog = () => setIsDeleteTaskDialogOpen(true);
@@ -148,6 +149,7 @@ const KanbanDND = (props: Props) => {
   ) => {
     e.preventDefault();
     try {
+      setIsUpating({ ...isUpating, update: true });
       const { res } = await apiRequest.update(`/api/tasks/${selectedTask.id}`, {
         title: selectedTask.title,
         description: selectedTask.description,
@@ -159,22 +161,22 @@ const KanbanDND = (props: Props) => {
       setTasks(
         tasks.map((task) => (task.id === selectedTask.id ? result.data : task))
       );
-      console.log(res);
-      console.log(result.data);
-
       toast.success("Task updated successfully");
       setIsEditTaskDialogOpen(false);
       setSelectedTask(initializeTask);
       setEditTaskStep(1);
+      setIsUpating({ ...isUpating, update: false });
     } catch (error) {
+      setIsUpating({ ...isUpating, update: false });
       console.error(error);
       toast.error((error as Error).message);
     }
   };
 
-  const handleDeleteTask = async() => {
+  const handleDeleteTask = async () => {
     try {
-      const {res} = await apiRequest.delete(`/api/tasks/${selectedTask.id}`)
+      setIsUpating({ ...isUpating, delete: true });
+      const { res } = await apiRequest.delete(`/api/tasks/${selectedTask.id}`);
       const result = await res.json();
       if (!res.ok || result.error) {
         throw new Error(result.message || "Something went wrong");
@@ -183,12 +185,14 @@ const KanbanDND = (props: Props) => {
       toast.success("Task deleted successfully");
       setIsDeleteTaskDialogOpen(false);
       setSelectedTask(initializeTask);
-      setEditTaskStep(1)
+      setEditTaskStep(1);
+      setIsUpating({ ...isUpating, delete: false });
     } catch (error) {
+      setIsUpating({ ...isUpating, delete: false });
       console.error(error);
       toast.error((error as Error).message);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -288,8 +292,13 @@ const KanbanDND = (props: Props) => {
                     name="title"
                     id="title"
                     defaultValue={selectedTask?.title || ""}
-                    onChange={(e) => setSelectedTask({...selectedTask, title:e.target.value})}
-                    />
+                    onChange={(e) =>
+                      setSelectedTask({
+                        ...selectedTask,
+                        title: e.target.value,
+                      })
+                    }
+                  />
                 </div>
                 <div className="flex flex-col gap-3">
                   <label htmlFor="description" className="space-y-3">
@@ -299,10 +308,20 @@ const KanbanDND = (props: Props) => {
                     name="description"
                     id="description"
                     defaultValue={selectedTask?.description || ""}
-                    onChange={(e) => setSelectedTask({...selectedTask, description:e.target.value})}
+                    onChange={(e) =>
+                      setSelectedTask({
+                        ...selectedTask,
+                        description: e.target.value,
+                      })
+                    }
                   />
                 </div>
-                <Button className="w-full text-center">Submit</Button>
+                <Button
+                  disabled={isUpating.update}
+                  className="w-full text-center"
+                >
+                  Submit
+                </Button>
               </form>
             )}
           </DialogContent>
@@ -360,7 +379,13 @@ const KanbanDND = (props: Props) => {
                 <p className="mt-4">
                   Are you sure you want to delete this task?
                 </p>
-                <Button variant={"destructive"} onClick={handleDeleteTask}>Delete</Button>
+                <Button
+                  disabled={isUpating.delete}
+                  variant={"destructive"}
+                  onClick={handleDeleteTask}
+                >
+                  Delete
+                </Button>
               </div>
             )}
           </DialogContent>
