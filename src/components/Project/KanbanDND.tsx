@@ -25,13 +25,24 @@ import {
 import { TaskWithProjectInfo } from "@/types";
 import { Task } from "@/generated/prisma";
 import TaskCard from "./TaskCard";
-import DroppableColumn from "./DroppableColumn"; //
+import DroppableColumn from "./DroppableColumn";
 import BackButton from "../BackButton";
 import { toast } from "sonner";
 import { apiRequest } from "@/lib/apiRequest";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { SelectViewport } from "@radix-ui/react-select";
 
 interface Props {
   tasks: TaskWithProjectInfo[];
@@ -46,6 +57,23 @@ const KanbanDND = (props: Props) => {
   const [isFormDialogAddTaskOpen, setIsFormDialogAddTaskOpen] = useState(false);
   const [isFormDialogAddTaskLoading, setisFormDialogAddTaskLoading] =
     useState(false);
+  const initializeTask: Task = {
+    title: "",
+    description: "",
+    id: "",
+    status: "TODO",
+    assigneeId: "",
+    createdAt: new Date(),
+    projectId: "",
+    updatedAt: new Date(Date.now()),
+  };
+  const [isEditTaskDialogOpen, setIsEditTaskDialogOpen] = useState(false);
+  const [isDeleteTaskDialogOpen, setIsDeleteTaskDialogOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task>(initializeTask);
+  const [editTaskStep, setEditTaskStep] = useState(1);
+
+  const openEditDialog = () => setIsEditTaskDialogOpen(true);
+  const openDeleteDialog = () => setIsDeleteTaskDialogOpen(true);
 
   useEffect(() => {
     setTasks(initialTasks);
@@ -115,47 +143,229 @@ const KanbanDND = (props: Props) => {
     }
   };
 
+  const handleEditTitleAndDescTask: FormEventHandler<HTMLFormElement> = async (
+    e
+  ) => {
+    e.preventDefault();
+    try {
+      const { res } = await apiRequest.update(`/api/tasks/${selectedTask.id}`, {
+        title: selectedTask.title,
+        description: selectedTask.description,
+      });
+      const result = await res.json();
+      if (!res.ok || result.error) {
+        throw new Error(result.message || "Something went wrong");
+      }
+      setTasks(
+        tasks.map((task) => (task.id === selectedTask.id ? result.data : task))
+      );
+      console.log(res);
+      console.log(result.data);
+
+      toast.success("Task updated successfully");
+      setIsEditTaskDialogOpen(false);
+      setSelectedTask(initializeTask);
+      setEditTaskStep(1);
+    } catch (error) {
+      console.error(error);
+      toast.error((error as Error).message);
+    }
+  };
+
+  const handleDeleteTask = async() => {
+    try {
+      const {res} = await apiRequest.delete(`/api/tasks/${selectedTask.id}`)
+      const result = await res.json();
+      if (!res.ok || result.error) {
+        throw new Error(result.message || "Something went wrong");
+      }
+      setTasks(tasks.filter((task) => task.id !== selectedTask.id));
+      toast.success("Task deleted successfully");
+      setIsDeleteTaskDialogOpen(false);
+      setSelectedTask(initializeTask);
+      setEditTaskStep(1)
+    } catch (error) {
+      console.error(error);
+      toast.error((error as Error).message);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <div className="">
         <BackButton />
       </div>
-      <Dialog
-        open={isFormDialogAddTaskOpen}
-        onOpenChange={setIsFormDialogAddTaskOpen}
-      >
-        <DialogTrigger asChild>
-          <Button
-            className="w-fit"
-            onClick={() => setIsFormDialogAddTaskOpen(true)}
-          >
-            Add Task
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Task</DialogTitle>
-          </DialogHeader>
-          <DialogDescription asChild>
-            <form onSubmit={addTask} className="flex flex-col gap-5">
+      <div className="flex gap-6 items-center">
+        <Dialog
+          open={isFormDialogAddTaskOpen}
+          onOpenChange={setIsFormDialogAddTaskOpen}
+        >
+          <DialogTrigger asChild>
+            <Button
+              className="w-fit"
+              onClick={() => setIsFormDialogAddTaskOpen(true)}
+            >
+              Add Task
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Task</DialogTitle>
+            </DialogHeader>
+            <DialogDescription asChild>
+              <form onSubmit={addTask} className="flex flex-col gap-5">
+                <div className="flex flex-col gap-3">
+                  <label htmlFor="title" className="space-y-3">
+                    Title:
+                  </label>
+                  <Input type="text" name="title" id="title" />
+                </div>
+                <div className="flex flex-col gap-3">
+                  <label htmlFor="description" className="space-y-3">
+                    Description:
+                  </label>
+                  <Textarea name="description" id="description" />
+                </div>
+                <Button disabled={isFormDialogAddTaskLoading}>Submit</Button>
+              </form>
+            </DialogDescription>
+          </DialogContent>
+        </Dialog>
+        <Dialog
+          open={isEditTaskDialogOpen}
+          onOpenChange={setIsEditTaskDialogOpen}
+        >
+          <DialogTrigger asChild>
+            <Button onClick={openEditDialog}>Edit</Button>
+          </DialogTrigger>
+          <DialogContent className="p-6">
+            <DialogTitle>Edit Task</DialogTitle>
+            {editTaskStep === 1 ? (
+              <Select
+                value={selectedTask?.id || ""}
+                onValueChange={(value) =>
+                  setSelectedTask(
+                    tasks.find((task) => task.id === value) ?? selectedTask
+                  )
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a task" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectScrollUpButton />
+                  <SelectViewport>
+                    <SelectGroup>
+                      {tasks.map((task) => (
+                        <SelectItem key={task.id} value={task.id}>
+                          {task.title}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectViewport>
+                  <SelectScrollDownButton />
+                </SelectContent>
+                <Button
+                  onClick={() => {
+                    if (selectedTask.id) {
+                      setEditTaskStep(2);
+                    } else {
+                      toast.error("Mohon pilih task yang akan diedit");
+                    }
+                  }}
+                >
+                  Next
+                </Button>
+              </Select>
+            ) : (
+              <form onSubmit={handleEditTitleAndDescTask} className="space-y-4">
+                <div className="flex flex-col gap-3">
+                  <label htmlFor="title" className="space-y-3">
+                    New Task Title:
+                  </label>
+                  <Input
+                    type="text"
+                    name="title"
+                    id="title"
+                    defaultValue={selectedTask?.title || ""}
+                    onChange={(e) => setSelectedTask({...selectedTask, title:e.target.value})}
+                    />
+                </div>
+                <div className="flex flex-col gap-3">
+                  <label htmlFor="description" className="space-y-3">
+                    New Task Description:
+                  </label>
+                  <Textarea
+                    name="description"
+                    id="description"
+                    defaultValue={selectedTask?.description || ""}
+                    onChange={(e) => setSelectedTask({...selectedTask, description:e.target.value})}
+                  />
+                </div>
+                <Button className="w-full text-center">Submit</Button>
+              </form>
+            )}
+          </DialogContent>
+        </Dialog>
+        <Dialog
+          open={isDeleteTaskDialogOpen}
+          onOpenChange={setIsDeleteTaskDialogOpen}
+        >
+          <DialogTrigger asChild>
+            <Button onClick={openDeleteDialog} variant="destructive">
+              Delete
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="p-6">
+            <DialogTitle>Delete Task</DialogTitle>
+            {editTaskStep === 1 ? (
+              <Select
+                value={selectedTask?.id || ""}
+                onValueChange={(value) =>
+                  setSelectedTask(
+                    tasks.find((task) => task.id === value) ?? selectedTask
+                  )
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a task" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectScrollUpButton />
+                  <SelectViewport>
+                    <SelectGroup>
+                      {tasks.map((task) => (
+                        <SelectItem key={task.id} value={task.id}>
+                          {task.title}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectViewport>
+                  <SelectScrollDownButton />
+                </SelectContent>
+                <Button
+                  onClick={() => {
+                    if (selectedTask.id) {
+                      setEditTaskStep(2);
+                    } else {
+                      toast.error("Mohon pilih task ");
+                    }
+                  }}
+                >
+                  Next
+                </Button>
+              </Select>
+            ) : (
               <div className="flex flex-col gap-3">
-                <label htmlFor="title" className="space-y-3">
-                  Title:
-                </label>
-                <Input type="text" name="title" id="title" />
+                <p className="mt-4">
+                  Are you sure you want to delete this task?
+                </p>
+                <Button variant={"destructive"} onClick={handleDeleteTask}>Delete</Button>
               </div>
-              <div className="flex flex-col gap-3">
-                <label htmlFor="description" className="space-y-3">
-                  Description:
-                </label>
-                <Textarea name="description" id="description" />
-              </div>
-              <Button disabled={isFormDialogAddTaskLoading}>Submit</Button>
-            </form>
-          </DialogDescription>
-        </DialogContent>
-      </Dialog>
-
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
       {tasks.length ? (
         <DndContext
           sensors={sensors}
@@ -195,5 +405,4 @@ const KanbanDND = (props: Props) => {
     </div>
   );
 };
-
 export default KanbanDND;
